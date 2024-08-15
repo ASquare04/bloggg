@@ -1,13 +1,74 @@
-import InputBox from "../components/input.component"
-import google from "../imgs/google.png"
-import { Link } from "react-router-dom"
-import AnimateWrap from "../common/page-animation"
+import InputBox from "../components/input.component";
+import google from "../imgs/google.png";
+import { Link, Navigate } from "react-router-dom";
+import AnimateWrap from "../common/page-animation";
+import {Toaster, toast} from "react-hot-toast";
+import axios from "axios"
+import { storeInSession } from "../common/session";
+import { useContext } from "react";
+import { UserContext } from "../App";
 
 const UserAuthForm = ({ type }) => {
+
+    let { userAuth: { token }, setUserAuth } = useContext(UserContext)
+    console.log(token)
+
+    const userAuthViaServer = (serverRoute, formData) =>{
+        
+        axios.post(import.meta.env.VITE_SERVER_DOMAIN + serverRoute, formData)
+        .then(({data}) =>{
+            storeInSession("user", JSON.stringify(data))
+            setUserAuth(data)
+        })
+        .catch(({response}) =>{
+            toast.error(response.data.error)
+        })
+    }
+
+    const handleSubmit = (e) =>{
+
+        e.preventDefault();
+
+        let serverRoute = type == "sign-in" ? "/signin" : "/signup"
+
+        let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
+        let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,15}$/; // regex for password
+
+
+        let form = new FormData(formStructure)
+        let formData = {};
+
+        for(let [key, value] of form.entries()){
+            formData[key] = value
+        }
+
+        let {fullname, email, password} = formData
+        if(fullname){
+            if (fullname.length < 3) {
+                return toast.error("Full Name must consist of at least 3 letters" );
+            }
+        }
+
+        if (!email.length) {
+            return toast.error("Enter the email");
+        }
+        if (!emailRegex.test(email)) {
+            return toast.error("Provide a valid email address" );
+        }
+        if (!passwordRegex.test(password)) {
+            return toast.error("Password must be 6-15 characters, with uppercase, lowercase, and a number.");
+        }
+
+        userAuthViaServer(serverRoute, formData)
+    }
     return(
+        token ?
+        <Navigate to = "/" /> 
+        :
         <AnimateWrap keyValue={type}>
         <section className="h-cover flex items-center justify-center">
-            <form action="" className="w-[80%] max-w-[400px]">
+            <Toaster />
+            <form id="formStructure" className="w-[80%] max-w-[400px]">
                 <h1 className="text-3xl capitalize text-center mb-24">
                     {type === "sign-in" ? "welcome, we missed you" : "Connect with us"}
                 </h1>
@@ -34,7 +95,8 @@ const UserAuthForm = ({ type }) => {
                         icon="fi-rr-key" 
                     />
 
-                <button className="btn-dark center mt-12" type = "submit">                    
+                <button className="btn-dark center mt-12" type = "submit"
+                onClick={handleSubmit}>                    
                     {type.replace("-"," ")}
                 </button> 
 
