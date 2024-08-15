@@ -1,15 +1,24 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import logo from "../imgs/logo.png";
 import { Link, Outlet } from "react-router-dom";
+import { UserContext } from "../App";
+import UserNavigation from "./user-navigation.component";
 
 const Navbar = () => {
 
-    const [ searchBoxVisibility, setSearchBoxVisibility ] = useState(false)
+    const [ searchBoxVisibility, setSearchBoxVisibility ] = useState(false);
+    const [ userNavigation, setUserNavigation] = useState(false);
+
+    const { userAuth, userAuth: { token, profile_img }} = useContext(UserContext)
+
+    const handleNavigation = () => {
+      setUserNavigation(currentVal => !currentVal);
+    }
 
     return (
         <>
     <nav className="navbar">
-      <Link to="/" className="flex-none w-10">
+      <Link to="/" className="flex-none w-16">
         <img src={logo} className="w-full" alt="" />
       </Link>
 
@@ -34,13 +43,35 @@ const Navbar = () => {
             <p>Write</p>
         </Link>
 
-        <Link className="btn-dark py-2" to="/signin">
-            Sign In
-        </Link>
-        <Link className="btn-light py-2 hidden md:block" to="/signup">
-            Sign Up
-        </Link>
+        {
+          token ?
+          <>
+          <Link to="dashboard/notification">
+            <button className="w-12 h-12 rounded-full bg-grey relative hover:bg-black/20">
+            <i className="fi fi-rr-bell text-xl block mt-1"></i>
+            </button>
+          </Link>
+          <div className="relative" onClick={handleNavigation}>
+            <button className="w-12 h-12 mt-1">
+              <img src={profile_img} className="w-fill h-full object-cover rounded-full" alt="" />
+            </button>
 
+          {
+            userNavigation ? <UserNavigation /> : ""
+          }
+
+          </div>
+          </>
+          :
+          <>
+            <Link className="btn-dark py-2" to="/signin">
+              Sign In
+            </Link>
+            <Link className="btn-light py-2 hidden md:block" to="/signup">
+              Sign Up
+            </Link>
+          </>
+        }
       </div>
     </nav>
 
