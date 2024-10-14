@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import logo from "../imgs/logo.png";
+import logo from "../imgs/logoo.svg";
 import { Link, Outlet } from "react-router-dom";
 import { UserContext } from "../App";
 import UserNavigation from "./user-navigation.component";
@@ -18,7 +18,7 @@ const Navbar = () => {
     return (
         <>
     <nav className="navbar">
-      <Link to="/" className="flex-none w-16">
+      <Link to="/" className="flex-none w-44">
         <img src={logo} className="w-full" alt="" />
       </Link>
 
@@ -40,7 +40,7 @@ const Navbar = () => {
 
         <Link to="/editor" className="hidden md:flex gap-2 link">
         <i className="fi fi-rr-file-edit"></i>
-            <p>Write</p>
+            <p>Create</p>
         </Link>
 
         {
@@ -64,7 +64,7 @@ const Navbar = () => {
           </>
           :
           <>
-            <Link className="btn-dark py-2" to="/signin">
+            <Link className="btn-dark bg-logoGreen text-black py-2" to="/signin">
               Sign In
             </Link>
             <Link className="btn-light py-2 hidden md:block" to="/signup">
