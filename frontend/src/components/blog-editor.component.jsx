@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import logo from '../imgs/logo.png'
+import logo from '../imgs/logoo.svg'
 import AnimateWrap from "../common/page-animation"
 import banner from '../imgs/blog banner.png'
 
