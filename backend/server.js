@@ -6,6 +6,7 @@ import User from './Schema/User.js';
 import { nanoid } from 'nanoid';
 import jwt from 'jsonwebtoken'
 import cors from 'cors';
+import aws from 'aws-sdk'
 
 const server = express();
 let PORT = 3000;
@@ -19,6 +20,27 @@ server.use(cors());
 mongoose.connect(process.env.DB_LOCATION,{
     autoIndex:true
 })
+
+// aws-bucket-setup
+const  s3 = new aws.S3({
+    region : 'ap-south-1',
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+})
+
+const generateUploadURL = async () => {
+
+    const date = new Date();
+    const imageName = `${nanoid()}-${date.getTime()}.jpeg`;
+
+    return await s3.getSignedUrlPromise('putObject', {
+        Bucket: 'weblog-mern-project',
+        Key: imageName,
+        Expires: 1000,
+        ContentType: "images/jpeg"
+    })
+}
+
 
 const formatDatatoSend = (user) => {
     const token = jwt.sign( {id:user._id}, process.env.SECRET_ACCESS_KEY)
@@ -38,6 +60,14 @@ const generateUsername = async(email) => {
 
     return username
 }
+
+server.get('/get-upload-url',(req, res) => {
+    generateUploadURL().then(url => res.status(200).json({ uploadURL: url }))
+    .catch(err => {
+        console.log(err.message);
+        return res.status(500).json({error :  "Internal Server Error"})
+    })
+})
 
 server.post("/signup", (req, res) => {
     let { fullname, email, password } = req.body;
