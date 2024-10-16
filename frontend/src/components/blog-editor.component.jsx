@@ -3,13 +3,30 @@ import logo from '../imgs/logoo.svg'
 import AnimateWrap from "../common/page-animation"
 import bannerImg from '../imgs/blog banner.png'
 import { uploadImage } from "../common/aws"
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import { Toaster, toast } from 'react-hot-toast'
 import { EditorContext } from "../pages/editor.pages"
+import EditorJS from "@editorjs/editorjs";
+import { tools } from "./tools.component"
+
 
 const BlogEditor = () => {
 
     let { blog, blog: {title, banner, content, tags, des}, setBlog } = useContext(EditorContext)
+     
+//use effect 
+useEffect(()=>{
+    let editor = new EditorJS
+    ({
+        holderId:"textEditor",
+        data: '',
+        tools: tools,
+        placeholder: "let's write an awesome story "
+    })
+},{})
+
+   
+
 
     const handleUpload = (e) => {
 
@@ -75,12 +92,8 @@ const BlogEditor = () => {
         <AnimateWrap>
             <section>
                 <div className="mx-auto max-w-[800px] w-full">
-                <textarea placeholder="Blog Title" className="text-4xl font-medium w-full h-20 outline-none resize-none mt-10 leading-tight placeholder:opacity-40"
-                    onKeyDown={handleTitleKeyDown}
-                    onChange={handleTitleChange}>
-                    </textarea>
-
-                    <div className="relative aspect-video bg-white border-2 border-grey hover:opacity-80">
+                    
+                <div className="relative aspect-video bg-white border-2 border-grey hover:opacity-80">
                         <label htmlFor="uploadBanner">
                             <img src={banner} alt="" className="z-20" onError={handleError} />
                             <input id="uploadBanner" type="file" accept=".png,.jpeg,.jpg" hidden
@@ -88,8 +101,13 @@ const BlogEditor = () => {
                         </label>
                     </div>
                     
-                    <hr className="w-full opacity-10 my-5" />
-                                    
+                <textarea placeholder="Blog Title" className="text-4xl font-medium w-full h-20 outline-none resize-none mt-10 leading-tight placeholder:opacity-40"
+                    onKeyDown={handleTitleKeyDown}
+                    onChange={handleTitleChange}>
+                    </textarea>
+
+                    <div id="textEditor" className="font-gelasio"></div> 
+                    
                 </div>
             </section>
         </AnimateWrap>
