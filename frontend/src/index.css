@@ -1,16 +1,18 @@
 @import "@flaticon/flaticon-uicons/css/all/all";
+@import url('https://fonts.googleapis.com/css2?family=Mulish:wght@400;600&display=swap');
+
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer components {
+    
     * {
-        @apply m-0 p-0 box-border text-base outline-purple/30 duration-100;
-        font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+        @apply m-0 p-0 box-border text-base outline-lime-400 duration-100;
+        font-family: 'Mulish', sans-serif;
     }
-
-
+    
     html{
         @apply overflow-x-hidden;
     }
@@ -56,7 +58,7 @@
     }
 
     .input-box {
-        @apply w-[100%] rounded-md p-4 bg-grey pl-12 border border-grey focus:bg-transparent placeholder:text-black;
+        @apply w-[100%] rounded-md p-4 bg-zinc-50 pl-12 border-2 border-grey focus:bg-transparent placeholder:text-black;
     }
 
     input:disabled, input:disabled ~ .input-icon{
