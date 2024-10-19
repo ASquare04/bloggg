@@ -50,7 +50,7 @@ const PublishForm = () => {
         if (e.keyCode === 13 || e.keyCode === 188) {
             e.preventDefault();
 
-            let tag = e.target.value;
+            let tag = e.target.value.trim(); // Trim whitespace
 
             if (tags.length < tagLimit) {
                 if (!tags.includes(tag) && tag.length) {
@@ -80,7 +80,7 @@ const PublishForm = () => {
                     <i className="fi fi-br-cross"></i>
                 </button>
 
-                <div className="max-w-[550px] w-full">
+                <div className="max-w-[550px] w-full flex flex-col items-start">
                     <p className="text-dark-grey mb-1">Preview</p>
 
                     <div className="w-full aspect-video rounded-lg overflow-hidden bg-grey mt-4">
@@ -89,13 +89,13 @@ const PublishForm = () => {
                         ) : (
                             <p className="text-center text-dark-grey">No banner image available</p>
                         )}
-
-                        <h1 className="text-4xl font-medium mt-2 leading-tight line-clamp-2">{title}</h1>
-
-                        <p className="font-gelasio line-clamp-2 text-xl leading-7 mt-4">{des}</p>
                     </div>
 
-                    <div className="border-grey lg:border-1 lg:p-4 mt-6 rounded">
+                    <h1 className="text-4xl font-medium mt-2 leading-tight line-clamp-2">{title}</h1>
+
+                    <p className="font-gelasio line-clamp-2 text-xl leading-7 mt-4">{des}</p>
+
+                    <div className="border-grey lg:border-1 lg:p-4 mt-6 rounded w-full">
                         <p className="text-dark-grey mb-2 mt-3">Blog Title</p>
                         <input
                             type="text"
@@ -130,6 +130,9 @@ const PublishForm = () => {
                                 <Tag tag={tag} tagIndex={i} key={i} removeTag={removeTag} />
                             ))}
                         </div>
+                        <p className="mt-1 mb-4 text-dark-grey text-right">{tagLimit - tags.length} Tags left</p>
+
+                        <button className="btn-dark px-8">Publish</button>
                     </div>
                 </div>
             </section>
