@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import 'dotenv/config'
 import bcrypt from 'bcrypt'
 import User from './Schema/User.js';
+import Blog from './Schema/Blog.js';
 import { nanoid } from 'nanoid';
 import jwt from 'jsonwebtoken'
 import cors from 'cors';
@@ -41,6 +42,24 @@ const generateUploadURL = async () => {
     })
 }
 
+const verifyJWT = (req, res, next) => {
+    
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if(token==null){
+        return res.status(401).json({message:"Unauthorized Access, No Token"})
+    }
+    
+    jwt.verify(token, process.env.SECRET_ACCESS_KEY, (err, user)=>{
+        if(err){
+            return res.status(403).json({error:"Invalid Access Token"})
+        }
+        req.user = user.id;
+        next();
+    })
+
+}
 
 const formatDatatoSend = (user) => {
     const token = jwt.sign( {id:user._id}, process.env.SECRET_ACCESS_KEY)
@@ -134,6 +153,69 @@ server.post("/signin", (req, res) => {
         return res.status(500).json({ "error": err.message });
     });
 });
+
+server.post('/create-blog', verifyJWT, (req, res) => {
+
+    let authorId = req.user;
+    let { title, banner, content, des, tags, draft } = req.body;
+
+    // Validate title
+    if (typeof title !== 'string' || title.trim().length === 0) {
+        return res.status(403).json({ "error": "Title is required and cannot be empty." });
+    }
+
+    if(!draft){
+        // Validate description
+        if (typeof des !== 'string' || des.length === 0 || des.length > 200) {
+            return res.status(403).json({ "error": "Description should be between 1 and 200 characters." });
+        }
+
+        // Validate banner URL
+        if (typeof banner !== 'string' || banner.trim().length === 0) {
+            return res.status(403).json({ "error": "Banner is required." });
+        }
+
+        // Validate content and blocks
+        if (!content || !content.blocks || content.blocks.length === 0) {
+            return res.status(403).json({ "error": "Blog must have some content to publish." });
+        }
+
+        // Validate tags
+        if (!tags || tags.length === 0 || tags.length > 10) {
+            return res.status(403).json({ "error": "Tags are required. Maximum 10 allowed." });
+        }
+    }
+
+    // Process tags
+    tags = tags.map(tag => tag.toLowerCase());
+
+    // Generate blogId
+    let blog_id = title.replace(/[^a-zA-Z0-9]/g, ' ').replace(/\s+/g, "-").trim() + nanoid();
+
+    let blog = new Blog({
+        title, des, banner, content, tags, author: authorId, blog_id, draft: Boolean(draft)
+    });
+
+    blog.save()
+    .then(blog => {
+        let incrementVal = draft ? 0 : 1;
+
+        User.findOneAndUpdate(
+            { _id: authorId },
+            { $inc: { "account_info.total_posts": incrementVal }, $push: { "blogs": blog._id } }
+        )
+        .then(user => {
+            return res.status(200).json({ id: blog._id });
+        })
+        .catch(err => {
+            return res.status(500).json({ "error": "Failed to update the post" });
+        });
+    })
+    .catch(err => {
+        return res.status(500).json({ "error": err.message });
+    });
+});
+
 server.listen(PORT, ()=>{
     console.log(`Server is running on port ${PORT}`)
 })
