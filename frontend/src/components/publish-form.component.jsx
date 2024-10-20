@@ -70,72 +70,77 @@ const PublishForm = () => {
 
     return (
         <AnimationWrapper>
-            <section className="w-screen min-h-screen flex items-center justify-center lg:gap-4 py-16">
-                <Toaster />
+<section className="w-screen min-h-screen flex items-center justify-center lg:gap-4 py-16">
+    <Toaster />
 
-                <button
-                    className="w-12 h-12 absolute right-[5vw] z-10 top-[5%] lg:top-[10%]"
-                    onClick={handleCloseEvent}
-                >
-                    <i className="fi fi-br-cross"></i>
-                </button>
+    <button
+        className="w-12 h-12 absolute right-[5vw] z-10 top-[5%] lg:top-[10%]"
+        onClick={handleCloseEvent}
+    >
+        <i className="fi fi-br-cross"></i>
+    </button>
 
-                <div className="max-w-[550px] w-full flex flex-col items-start">
-                    <p className="text-dark-grey mb-1">Preview</p>
+    <div className="w-full flex flex-col lg:flex-row items-start">
+        {/* Left Side: Banner and Title with Description */}
+        <div className="flex flex-col w-full lg:w-1/2">
+            <p className="text-dark-grey mb-1">Preview</p>
 
-                    <div className="w-full aspect-video rounded-lg overflow-hidden bg-grey mt-4">
-                        {banner ? (
-                            <img src={banner} alt="Blog banner" />
-                        ) : (
-                            <p className="text-center text-dark-grey">No banner image available</p>
-                        )}
-                    </div>
+            <div className="w-full aspect-video rounded-lg overflow-hidden bg-grey mt-4">
+                {banner ? (
+                    <img src={banner} alt="Blog banner" />
+                ) : (
+                    <p className="text-center text-dark-grey">No banner image available</p>
+                )}
+            </div>
 
-                    <h1 className="text-4xl font-medium mt-2 leading-tight line-clamp-2">{title}</h1>
+            <h1 className="text-4xl font-medium mt-2 leading-tight line-clamp-2">{title}</h1>
 
-                    <p className="font-gelasio line-clamp-2 text-xl leading-7 mt-4">{des}</p>
+            <p className="font-gelasio line-clamp-2 text-xl leading-7 mt-4">{des}</p>
+        </div>
 
-                    <div className="border-grey lg:border-1 lg:p-4 mt-6 rounded w-full">
-                        <p className="text-dark-grey mb-2 mt-3">Blog Title</p>
-                        <input
-                            type="text"
-                            placeholder="Blog Title"
-                            defaultValue={title}
-                            className="input-box p-4 w-full"
-                            onChange={handleBlogTitleChange}
-                        />
+        {/* Right Side: Blog Input Fields */}
+        <div className="border-grey lg:border-1 lg:p-4 mt-6 lg:mt-0 lg:ml-4 rounded w-full lg:w-1/2">
+            <p className="text-dark-grey mb-2 mt-3">Blog Title</p>
+            <input
+                type="text"
+                placeholder="Blog Title"
+                defaultValue={title}
+                className="input-box p-4 w-full"
+                onChange={handleBlogTitleChange}
+            />
 
-                        <p className="text-dark-grey mb-2 mt-3">Short description about your blog</p>
-                        <textarea
-                            maxLength={characterLimit}
-                            defaultValue={des}
-                            className="h-40 resize-none leading-7 input-box p-4 w-full"
-                            onChange={handleBlogDesChange}
-                            onKeyDown={handleTitleKeyDown}
-                        />
+            <p className="text-dark-grey mb-2 mt-3">Short description about your blog</p>
+            <textarea
+                maxLength={characterLimit}
+                defaultValue={des}
+                className="h-40 resize-none leading-7 input-box p-4 w-full"
+                onChange={handleBlogDesChange}
+                onKeyDown={handleTitleKeyDown}
+            />
 
-                        <p className="mt-1 text-dark-grey text-sm text-right">{characterLimit - des.length} characters left</p>
+            <p className="mt-1 text-dark-grey text-sm text-right">{characterLimit - des.length} characters left</p>
 
-                        <p className="text-dark-grey mb-2 mt-3">Topics - (Helps in searching and ranking your blog post)</p>
+            <p className="text-dark-grey mb-2 mt-3">Topics - (Helps in searching and ranking your blog post)</p>
 
-                        <div className="relative input-box p-2 py-2 pb-4">
-                            <input
-                                type="text"
-                                placeholder="Topic"
-                                className="sticky input-box bg-white top-0 left-0 p-4 mb-3 focus:bg-white w-full"
-                                onKeyDown={handleKeyDown}
-                            />
+            <div className="relative input-box p-2 py-2 pb-4">
+                <input
+                    type="text"
+                    placeholder="Topic"
+                    className="sticky input-box bg-white top-0 left-0 p-4 mb-3 focus:bg-white w-full"
+                    onKeyDown={handleKeyDown}
+                />
 
-                            {tags.map((tag, i) => (
-                                <Tag tag={tag} tagIndex={i} key={i} removeTag={removeTag} />
-                            ))}
-                        </div>
-                        <p className="mt-1 mb-4 text-dark-grey text-right">{tagLimit - tags.length} Tags left</p>
+                {tags.map((tag, i) => (
+                    <Tag tag={tag} tagIndex={i} key={i} removeTag={removeTag} />
+                ))}
+            </div>
+            <p className="mt-1 mb-4 text-dark-grey text-right">{tagLimit - tags.length} Tags left</p>
 
-                        <button className="btn-dark px-8">Publish</button>
-                    </div>
-                </div>
-            </section>
+            <button className="btn-dark px-8">Publish</button>
+        </div>
+    </div>
+</section>
+
         </AnimationWrapper>
     );
 };

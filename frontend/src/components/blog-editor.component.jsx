@@ -61,9 +61,9 @@ const BlogEditor = () => {
         console.log({ banner: blog.banner, title: blog.title, textEditor });
 
         // Validating required fields
-        if (!blog.banner.length) {
-            return toast.error("Upload a blog banner before publishing it");
-        }
+        // if (!blog.banner.length) {
+        //     return toast.error("Upload a blog banner before publishing it");
+        // }
 
         if (!blog.title.length) {
             return toast.error("Write a blog title to publish it");
